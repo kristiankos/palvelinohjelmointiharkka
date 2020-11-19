@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<title>Kansallispuistot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" th:src="@{js/jquery-3.5.1.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/main.js}"
+	src="../static/js/main.js"></script>
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"
+	th:href="@{css/bootstrap.min.css}" />
+</head>
+<body>
+
+	<div class="container">
+		<nav class="navbar  navbar-light bg-light">
+			<div class="navbar-brand">Kansallispuistot</div>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarNav" aria-controls="navbarNav"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item active"><a class="nav-link">Kirjaudu</a>
+					<span class="sr-only">(current)</span>
+					</li>
+					<li class="nav-item"><a class="nav-link" href="/">Puistot
+							
+					</a></li>
+					<li class="nav-item"><a class="nav-link" href="/citypage">Kaupungit</a>
+					</li>
+					
+					<li class="nav-item"><a sec:authorize="hasAuthority('ADMIN')" class="nav-link" href="/newpark">Lisää puisto</a>
+					</li>
+					<li sec:authorize="isAuthenticated()"><div  class="col-md-4" style="padding:20px 0">
+					<form th:action="@{/logout}" method="post">
+					<input type="submit" value="Kirjaudu Ulos" class="btn btn-sm btn-danger"/>
+					</form>
+					</div></li>
+				</ul>
+			</div>
+		</nav>
+	<div class="col-md-4 col-md-offset-4">
+		<div class="alert alert-danger" th:if="${param.error}">Virheellinen käyttäjätunnus ja salasana!</div>
+		<div class="alert alert-warning" th:if="${param.logout}">Kirjauduit ulos.</div>
+		<form th:action="@{/login}" method="post">
+			<div>
+				<label> Käyttäjätunnus : <input type="text" name="username"
+					class="form-control" />
+				</label>
+			</div>
+			<div>
+				<label> Salasana: <input type="password" name="password"
+					class="form-control" />
+				</label>
+			</div>
+			<div>
+				<input type="submit" value="Kirjaudu sisään" class="btn btn-primary" />
+			</div>
+		</form>
+		<a th:href="@{/signup}">Rekisteröidy</a>
+		<p> admin admin</p>
+		<p> user user </p>
+	</div>
+	</div>
+</body>
+</html>

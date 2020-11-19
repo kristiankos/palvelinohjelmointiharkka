@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<title>Kansallispuistot</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" th:src="@{js/jquery-3.5.1.min.js}"></script>
+<script type="text/javascript" th:src="@{js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/main.js}"
+	src="../static/js/main.js"></script>
+<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"
+	th:href="@{css/bootstrap.min.css}" />
+</head>
+<body>
+
+	<div class="container">
+		<nav class="navbar  navbar-light bg-light">
+			<div class="navbar-brand">Kansallispuistot</div>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarNav" aria-controls="navbarNav"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item"><a class="nav-link" href="/login">Kirjaudu</a>
+					</li>
+					<li class="nav-item active"><a class="nav-link" href="/">Puistot
+					<span class="sr-only">(current)</span>
+							
+					</a></li>
+					<li class="nav-item"><a class="nav-link" href="/citypage">Kaupungit</a>
+					</li>
+					
+					<li class="nav-item"><a sec:authorize="hasAuthority('ADMIN')" class="nav-link" href="/newpark">Lisää puisto</a>
+					</li>
+					<li sec:authorize="isAuthenticated()"><div  class="col-md-4" style="padding:20px 0">
+					<form th:action="@{/logout}" method="post">
+					<input type="submit" value="Kirjaudu Ulos" class="btn btn-sm btn-danger"/>
+					</form>
+					</div></li>
+				</ul>
+			</div>
+		</nav>
+
+
+		
+		<div class="card">
+			<div class="card-block">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Nimi</th>
+							<th>Kaupunki</th>
+							<th sec:authorize="hasAuthority('ADMIN')"></th>
+							<th sec:authorize="hasAuthority('ADMIN')"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="park : ${parks}">
+							<td th:text="${park.parkId}"></td>
+							<td th:text="${park.name}"></td>
+							<td th:text="${park.city.name}"></td>
+							<td sec:authorize="hasAuthority('ADMIN')"><a th:href="@{delete/{parkid}(parkid=${park.parkId})}"
+								class="btn btn-danger delBtn">Poista</a></td>
+							<td sec:authorize="hasAuthority('ADMIN')"><a th:href="@{parks/{parkid}(parkid=${park.parkId})}"
+								class="btn btn-primary eBtn">Muokkaa</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+
+	<div sec:authorize="hasAuthority('ADMIN')" class="saveForm">
+		<!-- MUOKKAA -->
+			<form th:object="${park}" th:action="@{save}" method="POST">
+			
+				<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+					aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Muokkaa</h5>
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="parkId" class="col-form-label">ID:</label> <input
+										type="text" class="form-control" id="parkId" name="parkId"
+										value="" readonly/>
+								</div>
+								<div class="form-group">
+									<label for="name" class="col-form-label">Nimi:</label> <input
+										type="text" class="form-control" id="name" name="name"
+										value="" />
+								</div>
+								<div class="form-group">
+								    <label for="city">Kaupunki:</label>
+								    <select class="form-control" id="citylist" name="city">
+								    </select>
+								  </div>
+								
+								
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Sulje</button>
+								<input type="submit" class="btn btn-primary" value="Tallenna" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div sec:authorize="hasAuthority('ADMIN')" class="modal fade" id="myModal" tabindex="-1" role="dialog"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- POISTO -->
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Varmista
+							poisto</h5>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<p class="alert alert-danger">Poistetaanko tämä puisto?</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">Sulje</button>
+						<a href="" class="btn btn-danger" id="delRef">Poista</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script sec:authorize="hasAuthority('ADMIN')" type="text/javascript">
+		var csrfHeader = "[[${_csrf.headerName}]]";
+		var csrfToken = "[[${_csrf.token}]]";
+	</script>
+
+</body>
+</html>
